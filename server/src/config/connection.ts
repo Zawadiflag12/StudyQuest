@@ -3,15 +3,17 @@ dotenv.config();
 
 import mongoose from 'mongoose';
 
-const MONGODB_URI = process.env.MONGODB_URI || '';
-
 const db = async (): Promise<typeof mongoose.connection> => {
   try {
-     if (!MONGODB_URI) {
-      throw new Error('MONGODB_URI is not defined');
+    // Check process.env dynamically at runtime
+    const connectionString = process.env.MONGODB_URI;
+
+    if (!connectionString) {
+      throw new Error('MONGODB_URI environment variable is missing!');
     }
-    await mongoose.connect(MONGODB_URI);
-    console.log('Database connected.');
+
+    await mongoose.connect(connectionString);
+    console.log('Database connected successfully.');
     return mongoose.connection;
   } catch (error) {
     console.error('Database connection error:', error);
